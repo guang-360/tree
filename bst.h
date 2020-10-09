@@ -7,7 +7,7 @@
 
 #ifndef bst_h
 #define bst_h
-
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -20,6 +20,7 @@ typedef struct node
 #define LEN sizeof(BTNode)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//插入（非递归）
 void INSERTBST(BTREE *T, int item)
 {
     BTREE p, q;
@@ -64,19 +65,34 @@ void INSERTBST(BTREE *T, int item)
     }
 }
 
-BTREE SORTTREE(int K[], int n)
+BTREE SORTTREE()
 {
-    BTREE T = NULL;
-    int i;
-    if (n > 0)
+    BTREE tree = NULL;
+    printf("Create Binary Search Tree\nplease enter the element, seperated by space, and stop input by Enter:\n");
+    int key;
+    while(1)
     {
-        for (i = 0; i < n; i++)
-        {
-            INSERTBST(&T, K[i]); //n次调用插入函数
-        }
+        scanf("%d", &key);
+        INSERTBST(&tree, key);
+        if( getchar() == '\n' )
+            break;
     }
-    return T;
+    return tree;
 }
+//n次插入，建立二叉排序树
+//BTREE SORTTREE(int K[], int n)
+//{
+//    BTREE T = NULL;
+//    int i;
+//    if (n > 0)
+//    {
+//        for (i = 0; i < n; i++)
+//        {
+//            INSERTBST(&T, K[i]); //n次调用插入函数
+//        }
+//    }
+//    return T;
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -286,14 +302,51 @@ BTREE SEARCHBST2(BTREE T, int item)
     }
 }
 
+void write2dot(BTREE tree, FILE* fw)
+{
+    if(tree == NULL)
+        return ;
+    else
+    {
+        fprintf(fw, "%d [label = \"<f0> | <f1> %d | <f2> \", color = black, fontcolor = white, style = filled];\n", tree->data, tree->data);
+    }
+    if(tree->lchild)
+    {
+        fprintf(fw, "%d [label = \"<f0> | <f1> %d | <f2> \", color = black, fontcolor = white, style = filled];\n", tree->lchild->data, tree->lchild->data);
+        fprintf(fw, "%d:f0:sw -> %d:f1;\n", tree->data, tree->lchild->data);
+    }
+    if(tree->rchild)
+    {
+        fprintf(fw, "%d [label = \"<f0> | <f1> %d | <f2> \", color = black, fontcolor = white, style = filled];\n", tree->rchild->data, tree->rchild->data);
+        fprintf(fw, "%d:f2:se -> %d:f1;\n", tree->data, tree->rchild->data);
+    }
+    write2dot(tree->lchild, fw);
+    write2dot(tree->rchild, fw);
+}
+
+void visualization(BTREE tree, char* filename)
+{
+    FILE *fw;
+    if( NULL == (fw = fopen(filename, "w")) )
+    {
+        printf("open file error");
+        exit(0);
+    }
+    fprintf(fw, "digraph\n{\nnode [shape = Mrecord, style = filled, color = black, fontcolor = white];\n");
+    write2dot(tree, fw);
+    fprintf(fw, "}");
+    fclose(fw);
+}
+
 
 
 void BSTinfo(BTREE tree)
 {
     int depth = 0;
+    char fp[] = "/Users/duoguangxu/Documents/XCODE/tree/tree/graph2.dot";
     while (1)
     {
-        printf("What do you need to learn？\n1.广度优先\n2.前序遍历\n3.中序遍历\n4.后序遍历\n5.深度\n6.逐层查看\n7.查找\n0.退出\n");
+        printf("What do you want to do？\n1.广度优先\n2.前序遍历\n3.中序遍历\n4.后序遍历\n5.深度\n6.逐层查看\n7.查找\n8.插入\n9.可视化\n0.退出\n");
         int num = 0;
         int item = 0;
         scanf("%d", &num);
@@ -326,6 +379,14 @@ void BSTinfo(BTREE tree)
             printf("what do you need to search?\n");
             scanf("%d",&item);
             tree = SEARCHBST1(tree, item);
+            break;
+        case 8:
+            printf("please input the element to be inserted:\n");
+            scanf("%d",&item);
+            INSERTBST(&tree, item);
+            break;
+        case 9:
+            visualization(tree, fp);
             break;
         case 0:
             exit(0);

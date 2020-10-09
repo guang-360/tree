@@ -12,11 +12,11 @@
 
 int main()
 {
-    int k[]={8,23,5,2,4,23,5,45,23,65,1};
-    int len = sizeof(k)/sizeof(k[0]);
+//    int k[]={8,23,5,2,4,53,25,20,45,65,1};
+//    int len = sizeof(k)/sizeof(k[0]);
     BTREE tree = NULL;
-    tree = SORTTREE(k, len);
-    
+    tree = SORTTREE();
+
     BSTinfo(tree);
     return 0;
 }
