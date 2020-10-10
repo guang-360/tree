@@ -343,7 +343,7 @@ void visualization(BTREE tree, char* filename)
 void BSTinfo(BTREE tree)
 {
     int depth = 0;
-    char fp[] = "/Users/duoguangxu/Documents/XCODE/tree/tree/graph2.dot";
+    char fp[] = "/Users/duoguangxu/Documents/XCODE/tree/tree/graph.dot";
     while (1)
     {
         printf("What do you want to do？\n1.广度优先\n2.前序遍历\n3.中序遍历\n4.后序遍历\n5.深度\n6.逐层查看\n7.查找\n8.插入\n9.可视化\n0.退出\n");
