@@ -13,7 +13,7 @@
 
 typedef struct node{
     int data;
-    struct node *lchild, *rchild, *link;
+    struct node *lchild, *rchild;
 }BTNode,*BTREE;
 
 
@@ -134,46 +134,152 @@ int COUNT1(BTREE T)
 //    struct node *lchild, *rchild, *link;
 //}BTNode,*BTREE;
 
-int COUNT2(BTREE T)
+//int COUNT2(BTREE T)
+//{
+//    if(T==NULL)
+//    {
+//        return 0;
+//    }
+//    BTREE top = NULL;
+//    BTREE cur = NULL;
+//    int sum = 0;
+//    top = T;
+//    while(NULL != top)
+//    {
+//        while(T)
+//        {
+//            if((!T->lchild&&T->rchild)||(T->lchild&&!T->rchild))
+//            {
+//                sum++;
+//            }
+//            if(T->rchild)
+//            {
+//                cur = T->rchild;
+//                cur->link = top;    //push
+//                cur = top;
+//            }
+//            T = T->lchild;
+//        }
+//        T = top;    //pop
+//        top = top->link;
+//    }
+//    return sum;
+//}
+
+
+
+//exercise 6
+void ANCESTOR(BTREE T, int item)
 {
-    if(T==NULL)
+    if(T==NULL||T->data==item)
     {
-        return 0;
+        printf("what the fuck!\n");
+        return;
     }
-    BTREE top = NULL;
-    BTREE cur = NULL;
-    int sum = 0;
-    top = T;
-    while(NULL != top)
+    BTREE stack1[100];
+    int stack2[100], top = -1;
+    int flag = 0;
+    
+    while(top != -1)
     {
-        while(T)
+        while( T != NULL)
         {
-            if((!T->lchild&&T->rchild)||(T->lchild&&!T->rchild))
-            {
-                sum++;
-            }
-            if(T->rchild)
-            {
-                cur = T->rchild;
-                cur->link = top;
-                cur = top;
-            }
+            stack1[++top] = T;
+            stack2[top] = 0;
             T = T->lchild;
         }
-        T = top;
-        top = top->link;
+        T = stack1[top];
+        flag = stack2[top--];
+        if(flag == 0)
+        {
+            stack1[++top] = T;
+            stack2[top] = 1;
+            T = T->rchild;
+        }
+        else
+        {
+            if (item == T->data)
+            {
+                while(top != -1)
+                {
+                    printf("%d ",stack1[top--]->data);
+                }
+                return;
+            }
+            T = NULL;
+        }
     }
-    return sum;
 }
 
 
+//exercise 7 $$$$
+int SEARCHPOS(int INOD[],int n,int item)    //确定在中序中的位置
+{
+    int i;
+    for(i = 0; i < n ; i++)
+    {
+        if(INOD[i] == item)
+            return i+1;
+    }
+    return 0;
+}
+
+void INSERTITEM(BTREE *T, int item, int INOD[], int n)
+{
+    BTREE p,q;
+    int ord;
+    p = (BTREE)malloc(sizeof(BTNode));
+    p->data = item;
+    p->lchild = p->rchild = NULL;
+    if(*T == NULL)
+    {
+        *T = p;
+    }
+    else
+    {
+        ord = SEARCHPOS(INOD, n, item);
+        q = *T;
+        while(1)
+        {
+            if(ord<SEARCHPOS(INOD, n, q->data))
+            {
+                if(q->lchild!=NULL)
+                {
+                    q=q->lchild;
+                }
+                else
+                {
+                    q->lchild = p;
+                    break;
+                }
+            }
+            else
+            {
+                if(q->rchild!=NULL)
+                {
+                    q = q->rchild;
+                }
+                else
+                {
+                    q->rchild = p;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 
-
-
-
-
-
+BTREE BUILDTREE(int PREOD[],int INOD[],int n)
+{
+    BTREE T = NULL;
+    int i;
+    for(i = 0; i<n ; i++)
+    {
+        INSERTITEM(&T, PREOD[i] , INOD, n);
+    }
+    return T;
+}
 
 
 
