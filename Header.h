@@ -217,6 +217,7 @@ int EQUALBT(BTREE T1, BTREE T2)
 }
 
 //求结点所在层次
+//后序遍历
 #define M 50 //定义二叉树中结点最大数目
 int LAYERBT(BTREE T, char item)
 {

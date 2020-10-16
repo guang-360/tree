@@ -16,6 +16,74 @@ typedef struct node{
     struct node *lchild, *rchild;
 }BTNode,*BTREE;
 
+void CREATEBT(BTREE *T)
+{
+    int val;
+    scanf("%d",&val);
+    if(val == 0)
+    {
+        *T = NULL;
+    }
+    else
+    {
+        *T = (BTREE)malloc(sizeof(BTNode));
+        if(!*T)
+        {
+            exit(-1);
+        }
+        (*T)->data = val;
+        CREATEBT(&(*T)->lchild);
+        CREATEBT(&(*T)->rchild);
+    }
+    
+}
+
+//打印
+void DFSPRINT(BTREE T)
+{
+    if(T == NULL)
+    {
+        return;
+    }
+//    前序
+//    printf("%d ",T->data);
+    DFSPRINT(T->lchild);
+//    中序
+//    printf("%d ",T->data);
+    DFSPRINT(T->rchild);
+//    后序
+//    printf("%d ",T->data);
+}
+
+//层次遍历打印
+void LAYERPRINT(BTREE T)
+{
+    int rear = -1, front = -1, len = 0;
+    BTREE cur = NULL;
+    BTREE QUEUE[50] = {NULL};
+    QUEUE[++rear] = T;
+    while(front != rear)
+    {
+        len = rear - front;
+        while(len--)
+        {
+            cur = QUEUE[++front];
+            if(cur != NULL)
+            {
+                printf("%d ",cur->data);
+            }
+            if(cur->lchild)
+            {
+                QUEUE[++rear] = cur->lchild;
+            }
+            if(cur->rchild)
+            {
+                QUEUE[++rear] = cur->rchild;
+            }
+        }
+    }
+}
+
 
 //exercise 1
 void PREORDER(int *BT)
@@ -169,6 +237,7 @@ int COUNT1(BTREE T)
 
 
 //exercise 6
+//后序遍历
 void ANCESTOR(BTREE T, int item)
 {
     if(T==NULL||T->data==item)
@@ -281,6 +350,318 @@ BTREE BUILDTREE(int PREOD[],int INOD[],int n)
     return T;
 }
 
+
+//exercise 8
+#define NodeNum 50
+int TESTCOMTREE(BTREE T)
+{
+    if(NULL == T)
+    {
+        return 1;
+    }
+    BTREE cur, QUEUE[NodeNum] = {NULL};
+    int len = 0, flag = 0, front = -1, rear = -1;
+    QUEUE[++rear] = T;
+    while(front != rear)
+    {
+        len = rear - front;
+        while(len--)
+        {
+            cur = QUEUE[++front];
+            if(NULL != cur)
+            {
+                if(1 == flag)
+                {
+                    return 0;
+                }
+                QUEUE[++rear] = cur->lchild;    //此处不判断孩子是否为NULL，细节
+                QUEUE[++rear] = cur->rchild;
+            }
+            else if(NULL == cur)
+            {
+                flag = 1;
+            }
+        }
+    }
+    return 1;
+}
+
+
+
+//{
+//    BTREE QUEUE[NodeNum],p;
+//    int front, rear, flag = 1, comflag = 1;
+//    if(T != NULL)
+//    {
+//        QUEUE[0] = T;
+//        front = -1;
+//        rear = 0;
+//        while(front < rear)
+//        {
+//            p = QUEUE[++front];
+//            if(p->lchild == NULL)
+//            {
+//                flag = 0;
+//                if(p->rchild != NULL)
+//                {
+//                    comflag = 0;
+//                }
+//            }
+//            else
+//            {
+//                comflag = flag;
+//                QUEUE[++rear] = p->rchild;
+//                if(p->rchild != NULL)
+//                {
+//                    QUEUE[++rear] = p->rchild;
+//                }
+//                else
+//                {
+//                    flag = 0;
+//                }
+//            }
+//        }
+//    }
+//    return comflag;
+//}
+
+//exercise 9  找给定结点
+int SEARCHBT(BTREE T, BTREE p, int level)
+{
+    int count = 0;
+    if(T == NULL)
+    {
+        return 0;
+    }
+    if(T == p)
+    {
+        return level;
+    }
+    if((count = SEARCHBT(T->lchild, p, level+1) > 0))
+    {
+        printf("left\ncount=%d\n",count);
+        return count;
+    }
+    else
+    {
+        printf("right\n");
+        return SEARCHBT(T->rchild, p, level+1);
+    }
+}
+
+
+//exercise 10   求数据为item的结点的深度
+int FINDITEM(BTREE T, int item)
+{
+    if(NULL == T)
+    {
+        return 0;
+    }
+    BTREE QUEUE[50], cur = NULL;
+    int front = -1, rear = -1, level = 1, len;
+    QUEUE[++rear] = T;
+    while(front != rear)
+    {
+        len = rear - front;
+        while(len--)
+        {
+            cur = QUEUE[++front];
+            if(cur->data == item)
+            {
+                return level;
+            }
+            if(cur->lchild)
+            {
+                QUEUE[++rear] = cur->lchild;
+            }
+            if(cur->rchild)
+            {
+                QUEUE[++rear] = cur->rchild;
+            }
+        }
+        level++;
+    }
+    return 0;
+}
+
+//exercise 11 层次从右到左
+void REVERTLEVEL(BTREE T)
+{
+    BTREE QUEUE[NodeNum] = {NULL}, cur = NULL;
+    int front = -1, rear = -1, len = 0;
+    QUEUE[++rear] = T;
+    while(rear != front)
+    {
+        len = rear - front;
+        while(len--)
+        {
+            cur = QUEUE[++front];
+            if(cur->data)
+            {
+                printf("%d ",cur->data);
+            }
+            if(cur->rchild)
+            {
+                QUEUE[++rear] = cur->rchild;
+            }
+            if(cur->lchild)
+            {
+                QUEUE[++rear] = cur->lchild;
+            }
+        }
+    }
+}
+
+
+//exercise 12  打印所有左子树
+void PRINTLEFT(BTREE T)
+{
+    BTREE STACK[NodeNum], p = T;
+    int top = -1;
+    if(T != NULL)
+    {
+        do{
+            while(p != NULL)
+            {
+                STACK[++top] = p;
+                p = p->lchild;
+                if(p != NULL)
+                {
+                    printf("%d ",p->data);
+                }
+            }
+            p = STACK[top--];
+            p = p->rchild;
+        }while(!(p == NULL && top == -1));
+    }
+}
+
+//exercise 13  找p双亲结点，递归
+BTREE FINDPARENT(BTREE T, BTREE p)
+{
+    BTREE parent = NULL;
+    if(T == NULL)
+    {
+        return NULL;
+    }
+    if(T->lchild == p || T->rchild == p)
+    {
+        return T;
+    }
+    parent = FINDPARENT(T->lchild, p);
+    if(parent != NULL)
+    {
+        return parent;
+    }
+    else
+    {
+        return FINDPARENT(T->rchild, p);
+    }
+}
+
+
+//exercise 14  找兄弟
+BTREE FINDBROTHER(BTREE T, BTREE p)
+{
+    if(T == NULL)
+    {
+        return NULL;
+    }
+    BTREE STACK[NodeNum] = {NULL}, cur = NULL;
+    int top = -1;
+    STACK[++top] = T;
+    while(top != -1)
+    {
+        cur = STACK[top--];
+        if(cur->lchild == p)
+        {
+            if(cur->rchild)
+            {
+                return cur->rchild;
+            }
+            else
+            {
+                return NULL;
+            }
+        }
+        if(cur->rchild == p)
+        {
+            if(cur->lchild)
+            {
+                return cur->lchild;
+            }
+            else
+            {
+                return NULL;
+            }
+        }
+        if(cur->rchild)
+        {
+            STACK[++top] = cur->rchild;
+        }
+        if(cur->lchild)
+        {
+            STACK[++top] = cur->lchild;
+        }
+    }
+    return NULL;
+}
+
+//exercise 16  判断是否为二叉排序树
+//中序遍历
+int ISBST(BTREE T)
+{
+    if(T == NULL)
+    {
+        return 0;
+    }
+    BTREE STACK[NodeNum] = {NULL};
+    int top = -1, min = -1; //假设最小不小于-1
+    while(!(-1 == top && NULL == T))
+    {
+        while(T)
+        {
+            STACK[++top] = T;
+            T = T->lchild;
+        }
+        T = STACK[top--];
+        if(T->data < min)
+        {
+            return 0;
+        }
+        min = T->data;
+        T = T->rchild;
+    }
+    return 1;
+}
+
+//exercise 17  二叉排序树打印祖先结点
+//与第六题对比
+//由于是二叉排序树，利用特性，不用遍历
+void BST_ANCESTOR(BTREE T, int item)
+{
+    while(T != NULL)
+    {
+        if(T->data == item)
+        {
+            return;
+        }
+        if(T->data < item)
+        {
+            printf("%d ",T->data);
+            T = T->rchild;
+        }
+        else
+        {
+            printf("%d ",T->data);
+            T = T->lchild;
+        }
+    }
+}
+
+
+
+//exercise 18
 
 
 
