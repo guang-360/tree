@@ -4,7 +4,7 @@
 //
 //  Created by duoguang xu on 2020/10/8.
 //
-
+    
 //arithmetic about binary sort tree
 
 
@@ -17,6 +17,8 @@ int main()
     BTREE tree = NULL;
     tree = SORTTREE();
 
+//    DFS(tree);
     BSTinfo(tree);
+    
     return 0;
 }
